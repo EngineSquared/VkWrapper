@@ -1,5 +1,5 @@
 /**************************************************************************
- * VkWrapper v0.0.0
+ * VkWrapper v0.0.4
  *
  * VkWrapper is a software package, part of the Engine².
  *
@@ -16,7 +16,7 @@
  * This class is used to create an instance of the Vulkan API.
  *
  * @author @MasterLaplace
- * @version 0.0.0
+ * @version 0.0.4
  * @date 2024-10-15
  **************************************************************************/
 

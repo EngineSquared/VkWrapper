@@ -30,7 +30,7 @@ def get_current_version() -> str:
 
 def update_doxyfile_version(new_version: str) -> None:
     """
-    Updates the version number in the Doxyfile.cfg file for the Flakkari-Server project.
+    Updates the version number in the Doxyfile.cfg file for the VkWrapper project.
 
     Args:
         new_version (str): The new version number to set in the format 'major.minor.patch'.
@@ -46,9 +46,10 @@ def update_doxyfile_version(new_version: str) -> None:
     with open("Doxyfile.cfg", "w", newline='\n') as f:
         f.write(content)
 
-def update_cmakelists_version(new_version: str) -> None:
+
+def update_xmake_version(new_version: str) -> None:
     """
-    Updates the version number in the CMakeLists.txt file for the Flakkari-Server project.
+    Updates the version number in the xmke.lua file for the VkWrapper project.
 
     Args:
         new_version (str): The new version number to set in the format 'major.minor.patch'.
@@ -56,16 +57,12 @@ def update_cmakelists_version(new_version: str) -> None:
     Returns:
         None
     """
-    with open("CMakeLists.txt", "r") as f:
+    with open("xmake.lua", "r") as f:
         content = f.read()
 
-    content = re.sub(r'set\(FLAKKARI_VERSION_MAJOR \d+', f'set(FLAKKARI_VERSION_MAJOR {new_version.split(".")[0]}', content)
-    content = re.sub(r'set\(FLAKKARI_VERSION_MINOR \d+', f'set(FLAKKARI_VERSION_MINOR {new_version.split(".")[1]}', content)
-    content = re.sub(r'set\(FLAKKARI_VERSION_PATCH \d+', f'set(FLAKKARI_VERSION_PATCH {new_version.split(".")[2]}', content)
+    content = re.sub(r'set_version\(\"\d+\.\d+\.\d+', f'set_version("{new_version}', content)
 
-    content = re.sub(r'project\(Flakkari-Server VERSION \d+\.\d+\.\d+', f'project(Flakkari-Server VERSION {new_version}', content)
-
-    with open("CMakeLists.txt", "w", newline='\n') as f:
+    with open("xmake.lua", "w", newline='\n') as f:
         f.write(content)
 
 def update_config_in_version(path: str, new_version: str) -> None:
@@ -89,9 +86,9 @@ def update_config_in_version(path: str, new_version: str) -> None:
         content = f.read()
 
     content = re.sub(r'(\d+\.\d+\.\d+)', f"{major}.{minor}.{patch}", content)
-    content = re.sub(r'#define FLAKKARI_VERSION_MAJOR \d+', f'#define FLAKKARI_VERSION_MAJOR {major}', content)
-    content = re.sub(r'#define FLAKKARI_VERSION_MINOR \d+', f'#define FLAKKARI_VERSION_MINOR {minor}', content)
-    content = re.sub(r'#define FLAKKARI_VERSION_PATCH \d+', f'#define FLAKKARI_VERSION_PATCH {patch}', content)
+    content = re.sub(r'#define VKWRAPPER_VERSION_MAJOR \d+', f'#define VKWRAPPER_VERSION_MAJOR {major}', content)
+    content = re.sub(r'#define VKWRAPPER_VERSION_MINOR \d+', f'#define VKWRAPPER_VERSION_MINOR {minor}', content)
+    content = re.sub(r'#define VKWRAPPER_VERSION_PATCH \d+', f'#define VKWRAPPER_VERSION_PATCH {patch}', content)
 
     with open(path, "w", newline='\n') as f:
         f.write(content)
@@ -108,12 +105,12 @@ def loop_in_files(path: str, current_version: str, new_version: str) -> None:
     Returns:
         None
 
-    This function searches for files with extensions .cpp, .h, .md, .hpp, and .h.in within the given directory
+    This function searches for files with extensions .h, .md, .hpp, and .h.in within the given directory
     and its subdirectories. It updates the version number in these files from the current version to the new version.
     """
     for root, dirs, files in os.walk(path):
         for file in files:
-            if file.endswith(".cpp") or file.endswith(".h") or file.endswith(".md") or file.endswith(".hpp"):
+            if file.endswith(".h") or file.endswith(".md") or file.endswith(".hpp"):
                 print(f"Updating version {current_version} -> {new_version} in {file}")
                 match = re.search(r'(\d+\.\d+\.\d+)', current_version)
                 if match:
@@ -123,7 +120,11 @@ def loop_in_files(path: str, current_version: str, new_version: str) -> None:
                     with open(os.path.join(root, file), "w", newline='\n') as f:
                         f.write(content.replace(current_version_number, new_version))
 
-            if file.endswith(".h.in"):
+            elif file.endswith(".h.in"):
+                print(f"Updating version {current_version} -> {new_version} in {file}")
+                update_config_in_version(os.path.join(root, file), new_version)
+
+            if file.endswith("_config.h"):
                 print(f"Updating version {current_version} -> {new_version} in {file}")
                 update_config_in_version(os.path.join(root, file), new_version)
 
@@ -134,9 +135,9 @@ def apply_new_version(current_version: str, new_version: str):
     This function updates the version number in the following files:
     - VERSION
     - Doxyfile.cfg
-    - CMakeLists.txt
+    - xmake.lua
 
-    It also updates the version number in all relevant files within the ./Flakkari/ directory.
+    It also updates the version number in all relevant files within the ./src/ directory.
 
     Args:
         current_version (str): The current version of the project.
@@ -147,15 +148,15 @@ def apply_new_version(current_version: str, new_version: str):
     """
     print(f"Updating version {current_version} -> {new_version} in VERSION")
     with open("VERSION", "w", newline='\n') as version_file:
-        version_file.write(f"Flakkari v{new_version}\n")
+        version_file.write(f"VkWrapper v{new_version}\n")
 
     print(f"Updating version {current_version} -> {new_version} in Doxyfile.cfg")
     update_doxyfile_version(new_version)
 
-    print(f"Updating version {current_version} -> {new_version} in CMakeLists.txt")
-    update_cmakelists_version(new_version)
+    print(f"Updating version {current_version} -> {new_version} in xmake.lua")
+    update_xmake_version(new_version)
 
-    loop_in_files("./Flakkari/", current_version, new_version)
+    loop_in_files("./src/", current_version, new_version)
 
 def main(calculated_version: str):
     """

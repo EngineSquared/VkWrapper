@@ -1,5 +1,5 @@
 /**************************************************************************
- * VkWrapper v0.0.0
+ * VkWrapper v0.0.4
  *
  * VkWrapper is a software package, part of the Engine².
  *
@@ -18,7 +18,7 @@
  * All VkWrapper systems are automatically managed by the Engine² Core.
  *
  * @author @MasterLaplace
- * @version 0.0.0
+ * @version 0.0.4
  * @date 2025-03-11
  **************************************************************************/
 

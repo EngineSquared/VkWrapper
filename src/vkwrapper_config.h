@@ -1,5 +1,5 @@
 /**************************************************************************
- * VkWrapper v0.0.0
+ * VkWrapper v0.0.4
  *
  * VkWrapper is a software package, part of the Engine².
  *
@@ -14,7 +14,7 @@
  * @brief Compile-Time Configuration Parameters for VkWrapper.
  *
  * @author @MasterLaplace
- * @version 0.0.0
+ * @version 0.0.4
  * @date 2024-10-15
  **************************************************************************/
 
@@ -418,7 +418,7 @@
 #ifdef FLAG_VERSION_PATCH
     #define VKWRAPPER_VERSION_PATCH FLAG_VERSION_PATCH
 #else
-    #define VKWRAPPER_VERSION_PATCH 0 // NOSONAR
+    #define VKWRAPPER_VERSION_PATCH 4 // NOSONAR
 #endif
 
 #ifdef FLAG_VERSION_TWEAK

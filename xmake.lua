@@ -1,13 +1,14 @@
 add_repositories("es_repo https://github.com/EngineSquared/es-repo.git")
 
 add_rules("mode.debug", "mode.release", "plugin.vsxmake.autoupdate")
-add_requires("vulkan-headers", "vulkansdk", "vulkan-hpp", "glfw", "glm", "spdlog", "stb", "entt", "EngineSquared")
+
+add_requires("vulkan-headers", "vulkansdk", "vulkan-hpp", "glfw", "glm", "spdlog", "stb", "entt", "engine-squared")
 
 target("PluginVkWrapper")
     set_kind("static")
     set_default(true)
     set_languages("cxx20")
-    add_packages("vulkan-headers", "vulkansdk", "vulkan-hpp", "glfw", "glm", "spdlog", "stb", "entt", "EngineSquared")
+    add_packages("vulkan-headers", "vulkansdk", "vulkan-hpp", "glfw", "glm", "spdlog", "stb", "entt", "engine-squared")
     set_policy("build.warning", true)
     set_version("0.0.4")
 

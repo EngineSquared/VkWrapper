@@ -1,0 +1,86 @@
+name: Bump Version and Create Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master, main]
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+  security-events: write
+
+jobs:
+  bump_version_and_create_release:
+    name: Bump version and create release
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'bump') }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+
+      - name: Determine Default bump type
+        id: determine_default_bump
+        run: |
+          labels=$(cat <<EOF
+          ${{ toJson(github.event.pull_request.labels) }}
+          EOF
+          )
+          labels=$(echo "$labels" | jq -r '.[].name')
+          if echo "$labels" | grep -q "major"; then
+            echo "label_bump=major" >> $GITHUB_ENV
+          elif echo "$labels" | grep -q "minor"; then
+            echo "label_bump=minor" >> $GITHUB_ENV
+          else
+            echo "label_bump=patch" >> $GITHUB_ENV
+          fi
+
+      - name: Calculate bumped version
+        id: test_tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: ${{ env.label_bump }}
+          dry_run: true
+
+      - name: Run version bump script
+        run: |
+          python3 scripts/increment_version.py ${{ steps.test_tag_version.outputs.new_tag }}
+
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v1.4.4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          subject-name: "VkWrapper Version Bump"
+          subject-path: "scripts/increment_version.py"
+
+      - name: Set up Git and Push changes
+        env:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: bump the VkWrapper version to ${{ steps.test_tag_version.outputs.new_tag }}" || true
+          git push || true
+
+      - name: Create Tag
+        id: tag_version
+        env:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git tag ${{ steps.test_tag_version.outputs.new_tag }}
+          git push origin ${{ steps.test_tag_version.outputs.new_tag }}
+
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          tag: ${{ steps.test_tag_version.outputs.new_tag }}
+          name: VkWrapper ${{ steps.test_tag_version.outputs.new_tag }}
+          body: ${{ steps.test_tag_version.outputs.changelog }}
+          generateReleaseNotes: true

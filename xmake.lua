@@ -21,12 +21,6 @@ target("PluginVkWrapper")
         set_optimize("fastest")
     end
 
-    add_deps("PluginUtils")
-    add_deps("PluginObject")
-    add_deps("PluginWindow")
-    add_deps("UtilsLog")
-    add_deps("EngineSquaredCore")
-
     add_files("src/**.cpp")
     add_includedirs("src", { public = true })
     add_includedirs("src/wrapper", { public = true })

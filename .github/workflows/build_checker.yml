@@ -6,13 +6,13 @@ on:
      - 'ga-ignore-**'
      - 'gh-pages'
     paths:
-      - '**.cpp'
-      - '**.hpp'
-      - '**.c'
-      - '**.h'
-      - '**.in'
-      - '**.inl'
-      - '**.lua'
+      # - '**.cpp'
+      # - '**.hpp'
+      # - '**.c'
+      # - '**.h'
+      # - '**.in'
+      # - '**.inl'
+      # - '**.lua'
       - '**/build_checker.yml'
 
 jobs:
@@ -20,10 +20,9 @@ jobs:
     name: Build Checker
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest]
         include:
           - os: windows-latest
-          - os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Git repository

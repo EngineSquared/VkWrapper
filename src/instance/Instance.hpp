@@ -162,11 +162,9 @@ class Instance {
      * @param models  The models used in the graphics pipeline.
      * @param isDepth  Whether to enable depth testing.
      */
-    void
-    CreateGraphicsPipeline(const ShaderModule::ShaderPaths &shaders,
-                           const entt::resource_cache<Texture, TextureLoader> &textures,
-                           const entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> &models,
-                           bool isDepth);
+    void CreateGraphicsPipeline(
+        const ShaderModule::ShaderPaths &shaders, const entt::resource_cache<Texture, TextureLoader> &textures,
+        const entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> &models, bool isDepth);
 
     /**
      * @brief Create synchronization objects for the Vulkan API.

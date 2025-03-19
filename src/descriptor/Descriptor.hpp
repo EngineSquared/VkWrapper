@@ -58,6 +58,7 @@ class Descriptor {
      * The descriptor pool is used to allocate descriptor sets.
      *
      * @param device  The Vulkan device.
+     * @param allocator  The Vulkan allocator.
      */
     void CreateDescriptorPool(const VkDevice &device, VkAllocationCallbacks *allocator);
 

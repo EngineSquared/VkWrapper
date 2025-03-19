@@ -44,7 +44,5 @@ jobs:
           project-path: '.'
 
       - name: Configure and Build
-        run: |
-          xmake config --mode=release
-          xmake build -y
+        run: xmake build -y
         timeout-minutes: 5

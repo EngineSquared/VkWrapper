@@ -87,7 +87,18 @@ class Buffers {
      * @param info The creation information required for the Buffers.
      * @param textures The textures.
      */
-    void Create(const CreateInfo &info, const entt::resource_cache<Texture, TextureLoader> &textures);
+    void Create(const CreateInfo &info, const entt::resource_cache<Texture, TextureLoader> &textures,
+                const entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> &models);
+
+    /**
+     * @brief Create a Depth Image object in the Vulkan API.
+     *
+     * @param device  The Vulkan device.
+     * @param physicalDevice  The Vulkan physical device.
+     * @param swapChainExtent  The swap chain extent.
+     */
+    void CreateDepthResources(const VkDevice &device, const VkPhysicalDevice &physicalDevice,
+                              const VkExtent2D &swapChainExtent);
 
     /**
      * @brief Destroy the VertexBuffer object, the IndexBuffer object and the UniformBuffer object.
@@ -98,6 +109,13 @@ class Buffers {
      * @param swapChainImages The swap chain images.
      */
     void Destroy(const VkDevice &device, const std::vector<VkImage> &swapChainImages);
+
+    /**
+     * @brief Destroy the Depth Image object in the Vulkan API.
+     *
+     * @param device  The Vulkan device.
+     */
+    void DestroyDepthResources(const VkDevice &device);
 
     /**
      * @brief Update the Uniform Buffer object in the Vulkan API.
@@ -129,6 +147,25 @@ class Buffers {
      */
     [[nodiscard]] const VkBuffer &GetIndexBuffer() const { return _indexBuffer; }
 
+    /**
+     * @brief Get the depth buffer.
+     *
+     * @return const Texture& The depth buffer.
+     */
+    [[nodiscard]] const Texture &GetDepthBuffer() const { return _depth; }
+
+    [[nodiscard]] uint32_t GetVertexCount() const { return _vertexCount; }
+
+    [[nodiscard]] uint32_t GetIndexCount() const { return _indexCount; }
+
+    /**
+     * @brief Find the depth format in the Vulkan API.
+     *
+     * @param physicalDevice  The Vulkan physical device.
+     * @return VkFormat  The depth format.
+     */
+    [[nodiscard]] VkFormat FindDepthFormat(const VkPhysicalDevice &physicalDevice) const;
+
   private:
     /**
      * @brief Create a Vertex Buffer object in the Vulkan API.
@@ -139,7 +176,8 @@ class Buffers {
      * @param graphicsQueue  The Vulkan graphics queue.
      */
     void CreateVertexBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice,
-                            const VkCommandPool &commandPool, const VkQueue &graphicsQueue);
+                            const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
+                            const Object::Component::Mesh &mesh);
 
     /**
      * @brief Create a Index Buffer object in the Vulkan API.
@@ -150,7 +188,8 @@ class Buffers {
      * @param graphicsQueue  The Vulkan graphics queue.
      */
     void CreateIndexBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice,
-                           const VkCommandPool &commandPool, const VkQueue &graphicsQueue);
+                           const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
+                           const Object::Component::Mesh &mesh);
 
     /**
      * @brief Create a Uniform Buffer object in the Vulkan API.
@@ -177,7 +216,7 @@ class Buffers {
      * @param texture  The texture.
      */
     void CreateTextureBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice,
-                             const VkCommandPool &commandPool, const VkQueue &graphicsQueue, Texture &texture);
+                             const VkCommandPool &commandPool, const VkQueue &graphicsQueue, Texture &texture) const;
 
     /**
      * @brief Create a Texture View object in the Vulkan API.
@@ -185,7 +224,7 @@ class Buffers {
      * @param device  The Vulkan device.
      * @param texture  The texture.
      */
-    void CreateTextureView(const VkDevice &device, Texture &texture);
+    void CreateTextureView(const VkDevice &device, Texture &texture) const;
 
     /**
      * @brief Create a Texture Sampler object in the Vulkan API.
@@ -194,7 +233,7 @@ class Buffers {
      * @param physicalDevice  The Vulkan physical device.
      * @param texture  The texture.
      */
-    void CreateTextureSampler(const VkDevice &device, const VkPhysicalDevice &physicalDevice, Texture &texture);
+    void CreateTextureSampler(const VkDevice &device, const VkPhysicalDevice &physicalDevice, Texture &texture) const;
 
     /**
      * @brief Create a Buffer object in the Vulkan API.
@@ -209,10 +248,20 @@ class Buffers {
      */
     void CreateBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const VkDeviceSize size,
                       const VkBufferUsageFlags usage, const VkMemoryPropertyFlags properties, VkBuffer &buffer,
-                      VkDeviceMemory &bufferMemory);
+                      VkDeviceMemory &bufferMemory) const;
 
+    /**
+     * @brief Create a Image object in the Vulkan API. The image is used to store the texture data.
+     *
+     * @param device  The Vulkan device.
+     * @param physicalDevice  The Vulkan physical device.
+     * @param format  The format of the image.
+     * @param tiling  The tiling of the image.
+     * @param usage  The usage of the image.
+     * @param texture  The texture.
+     */
     void CreateImage(const VkDevice &device, const VkPhysicalDevice &physicalDevice, VkFormat format,
-                     VkImageTiling tiling, VkImageUsageFlags usage, Texture &texture);
+                     VkImageTiling tiling, VkImageUsageFlags usage, Texture &texture) const;
 
     /**
      * @brief Find the memory type in the physical device.
@@ -226,7 +275,7 @@ class Buffers {
      * @return uint32_t The memory type index.
      */
     uint32_t FindMemoryType(const VkPhysicalDevice &physicalDevice, const uint32_t typeFilter,
-                            const VkMemoryPropertyFlags properties);
+                            const VkMemoryPropertyFlags properties) const;
 
     /**
      * @brief Copy a buffer from the source buffer to the destination buffer.
@@ -239,7 +288,7 @@ class Buffers {
      * @param size  The size of the buffer.
      */
     void CopyBuffer(const VkDevice &device, const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
-                    const VkBuffer &srcBuffer, const VkBuffer &dstBuffer, VkDeviceSize size);
+                    const VkBuffer &srcBuffer, const VkBuffer &dstBuffer, VkDeviceSize size) const;
 
     /**
      * @brief Transition the image layout in the Vulkan API.
@@ -253,7 +302,8 @@ class Buffers {
      * @param newLayout  The new layout of the image.
      */
     void TransitionImageLayout(const VkDevice &device, const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
-                               const VkImage &image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+                               const VkImage &image, VkFormat format, VkImageLayout oldLayout,
+                               VkImageLayout newLayout) const;
 
     /**
      * @brief Copy a buffer to an image in the Vulkan API.
@@ -265,7 +315,7 @@ class Buffers {
      * @param texture  The texture.
      */
     void CopyBufferToImage(const VkDevice &device, const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
-                           VkBuffer buffer, Texture &texture);
+                           VkBuffer buffer, Texture &texture) const;
 
     /**
      * @brief Begin a single time command in the Vulkan API.
@@ -274,7 +324,7 @@ class Buffers {
      * @param commandPool  The Vulkan command pool.
      * @return VkCommandBuffer  The command buffer.
      */
-    VkCommandBuffer BeginSingleTimeCommands(const VkDevice &device, const VkCommandPool &commandPool);
+    VkCommandBuffer BeginSingleTimeCommands(const VkDevice &device, const VkCommandPool &commandPool) const;
 
     /**
      * @brief End a single time command in the Vulkan API.
@@ -285,17 +335,41 @@ class Buffers {
      * @param commandBuffer  The command buffer.
      */
     void EndSingleTimeCommands(const VkDevice &device, const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
-                               VkCommandBuffer commandBuffer);
+                               VkCommandBuffer commandBuffer) const;
+
+    /**
+     * @brief Find a supported format in the Vulkan API.
+     *
+     * @param physicalDevice  The Vulkan physical device.
+     * @param candidates  The candidates.
+     * @param tiling  The tiling.
+     * @param features  The features.
+     * @return VkFormat  The supported format.
+     */
+    VkFormat FindSupportedFormat(const VkPhysicalDevice &physicalDevice, const std::vector<VkFormat> &candidates,
+                                 const VkImageTiling tiling, const VkFormatFeatureFlags features) const;
+
+    /**
+     * @brief Has the format a stencil component in the Vulkan API.
+     *
+     * @param format  The format.
+     * @return true  If the format has a stencil component.
+     * @return false  If the format does not have a stencil component.
+     */
+    bool HasStencilComponent(const VkFormat format) const;
 
   private:
     VkBuffer _vertexBuffer;
     VkDeviceMemory _vertexBufferMemory;
+    uint32_t _vertexCount;
     VkBuffer _indexBuffer;
     VkDeviceMemory _indexBufferMemory;
+    uint32_t _indexCount;
     std::vector<VkBuffer> _uniformBuffers;
     std::vector<VkDeviceMemory> _uniformBuffersMemory;
     std::vector<void *> _uniformBuffersMapped;
     VkImageView _textureView;
+    Texture _depth;
 };
 
 } // namespace ES::Plugin::Wrapper

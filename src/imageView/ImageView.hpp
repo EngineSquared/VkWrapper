@@ -74,11 +74,12 @@ class ImageView {
      * @param device  The Vulkan logical device used to create the image view.
      * @param image  The Vulkan image used to create the image view.
      * @param format  The format of the image.
-     * @param layer  The layer of the image.
+     * @param aspectFlags  The aspect flags of the image.
+     * @param layer  The layer of the image. The default value is 0.
      * @return VkImageView  The image view.
      */
     [[nodiscard]] static VkImageView CreateImageView(const VkDevice &device, VkImage image, VkFormat format,
-                                                     uint32_t layer);
+                                                     VkImageAspectFlags aspectFlags, uint32_t layer = 0);
 
     /**
      * @brief Get the Image Views object.

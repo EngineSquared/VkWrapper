@@ -2,27 +2,37 @@
 
 namespace ES::Plugin::Wrapper {
 
-void Buffers::Create(const CreateInfo &info, const entt::resource_cache<Texture, TextureLoader> &textures)
+void Buffers::Create(const CreateInfo &info, const entt::resource_cache<Texture, TextureLoader> &textures,
+                     const entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> &models)
 {
-    CreateVertexBuffer(info.device, info.physicalDevice, info.commandPool, info.graphicsQueue);
-    CreateIndexBuffer(info.device, info.physicalDevice, info.commandPool, info.graphicsQueue);
+    for (const auto &model : models)
+    {
+        if (!model.second)
+            continue;
 
-    CreateUniformBuffer(info.device, info.physicalDevice, info.swapChainImages);
+        auto &mesh = const_cast<Object::Component::Mesh &>(*model.second);
+
+        CreateVertexBuffer(info.device, info.physicalDevice, info.commandPool, info.graphicsQueue, mesh);
+        CreateIndexBuffer(info.device, info.physicalDevice, info.commandPool, info.graphicsQueue, mesh);
+
+        CreateUniformBuffer(info.device, info.physicalDevice, info.swapChainImages);
+    }
 
     for (const auto &texture : textures)
     {
         if (!texture.second)
             continue;
 
-        CreateTextureBuffer(info.device, info.physicalDevice, info.commandPool, info.graphicsQueue,
-                            const_cast<Texture &>(*texture.second));
-        CreateTextureView(info.device, const_cast<Texture &>(*texture.second));
-        CreateTextureSampler(info.device, info.physicalDevice, const_cast<Texture &>(*texture.second));
+        auto &tex = const_cast<Texture &>(*texture.second);
+
+        CreateTextureBuffer(info.device, info.physicalDevice, info.commandPool, info.graphicsQueue, tex);
+        CreateTextureView(info.device, tex);
+        CreateTextureSampler(info.device, info.physicalDevice, tex);
     }
 }
 
 void Buffers::CreateVertexBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice,
-                                 const VkCommandPool &commandPool, const VkQueue &graphicsQueue)
+                                 const VkCommandPool &commandPool, const VkQueue &graphicsQueue, const Object::Component::Mesh &mesh)
 {
     VkDeviceSize bufferSize = sizeof(VERTICES[0]) * VERTICES.size();
 
@@ -49,9 +59,10 @@ void Buffers::CreateVertexBuffer(const VkDevice &device, const VkPhysicalDevice 
 }
 
 void Buffers::CreateIndexBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice,
-                                const VkCommandPool &commandPool, const VkQueue &graphicsQueue)
+                                const VkCommandPool &commandPool, const VkQueue &graphicsQueue, const Object::Component::Mesh &mesh)
 {
     VkDeviceSize bufferSize = sizeof(INDICES[0]) * INDICES.size();
+    _indexCount = static_cast<uint32_t>(INDICES.size());
 
     VkBuffer stagingBuffer{};
     VkDeviceMemory stagingBufferMemory{};
@@ -95,7 +106,8 @@ void Buffers::CreateUniformBuffer(const VkDevice &device, const VkPhysicalDevice
 }
 
 void Buffers::CreateTextureBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice,
-                                  const VkCommandPool &commandPool, const VkQueue &graphicsQueue, Texture &texture)
+                                  const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
+                                  Texture &texture) const
 {
     VkBuffer stagingBuffer{};
     VkDeviceMemory stagingBufferMemory{};
@@ -127,12 +139,14 @@ void Buffers::CreateTextureBuffer(const VkDevice &device, const VkPhysicalDevice
     vkFreeMemory(device, stagingBufferMemory, nullptr);
 }
 
-void Buffers::CreateTextureView(const VkDevice &device, Texture &texture)
+void Buffers::CreateTextureView(const VkDevice &device, Texture &texture) const
 {
-    texture.SetTextureView(ImageView::CreateImageView(device, texture.GetImage(), VK_FORMAT_R8G8B8A8_SRGB, 0));
+    texture.SetTextureView(
+        ImageView::CreateImageView(device, texture.GetImage(), VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT));
 }
 
-void Buffers::CreateTextureSampler(const VkDevice &device, const VkPhysicalDevice &physicalDevice, Texture &texture)
+void Buffers::CreateTextureSampler(const VkDevice &device, const VkPhysicalDevice &physicalDevice,
+                                   Texture &texture) const
 {
     VkPhysicalDeviceProperties properties{};
     vkGetPhysicalDeviceProperties(physicalDevice, &properties);
@@ -158,6 +172,19 @@ void Buffers::CreateTextureSampler(const VkDevice &device, const VkPhysicalDevic
     if (vkCreateSampler(device, &samplerInfo, nullptr, &texture.GetSampler()) != VK_SUCCESS)
         throw VkWrapperError("failed to create texture sampler!");
 }
+
+void Buffers::CreateDepthResources(const VkDevice &device, const VkPhysicalDevice &physicalDevice,
+                                   const VkExtent2D &swapChainExtent)
+{
+    VkFormat depthFormat = FindDepthFormat(physicalDevice);
+    _depth.Create(swapChainExtent.width, swapChainExtent.height);
+    CreateImage(device, physicalDevice, depthFormat, VK_IMAGE_TILING_OPTIMAL,
+                VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, _depth);
+    _depth.SetTextureView(
+        ImageView::CreateImageView(device, _depth.GetImage(), depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT));
+}
+
+void Buffers::DestroyDepthResources(const VkDevice &device) { _depth.Destroy(device); }
 
 void Buffers::Destroy(const VkDevice &device, [[maybe_unused]] const std::vector<VkImage> &swapChainImages)
 {
@@ -193,7 +220,7 @@ void Buffers::UpdateUniformBuffer(const VkDevice &device, const VkExtent2D swapC
 
 void Buffers::CreateBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const VkDeviceSize size,
                            const VkBufferUsageFlags usage, const VkMemoryPropertyFlags properties, VkBuffer &buffer,
-                           VkDeviceMemory &bufferMemory)
+                           VkDeviceMemory &bufferMemory) const
 {
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -219,7 +246,7 @@ void Buffers::CreateBuffer(const VkDevice &device, const VkPhysicalDevice &physi
 }
 
 void Buffers::CreateImage(const VkDevice &device, const VkPhysicalDevice &physicalDevice, VkFormat format,
-                          VkImageTiling tiling, VkImageUsageFlags usage, Texture &texture)
+                          VkImageTiling tiling, VkImageUsageFlags usage, Texture &texture) const
 {
     VkImageCreateInfo imageInfo{};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -258,7 +285,7 @@ void Buffers::CreateImage(const VkDevice &device, const VkPhysicalDevice &physic
 }
 
 uint32_t Buffers::FindMemoryType(const VkPhysicalDevice &physicalDevice, const uint32_t typeFilter,
-                                 const VkMemoryPropertyFlags properties)
+                                 const VkMemoryPropertyFlags properties) const
 {
     VkPhysicalDeviceMemoryProperties memProperties{};
     vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
@@ -271,7 +298,7 @@ uint32_t Buffers::FindMemoryType(const VkPhysicalDevice &physicalDevice, const u
 }
 
 void Buffers::CopyBuffer(const VkDevice &device, const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
-                         const VkBuffer &srcBuffer, const VkBuffer &dstBuffer, VkDeviceSize size)
+                         const VkBuffer &srcBuffer, const VkBuffer &dstBuffer, VkDeviceSize size) const
 {
     VkCommandBuffer commandBuffer = BeginSingleTimeCommands(device, commandPool);
 
@@ -284,7 +311,7 @@ void Buffers::CopyBuffer(const VkDevice &device, const VkCommandPool &commandPoo
 
 void Buffers::TransitionImageLayout(const VkDevice &device, const VkCommandPool &commandPool,
                                     const VkQueue &graphicsQueue, const VkImage &image, VkFormat format,
-                                    VkImageLayout oldLayout, VkImageLayout newLayout)
+                                    VkImageLayout oldLayout, VkImageLayout newLayout) const
 {
     VkCommandBuffer commandBuffer = BeginSingleTimeCommands(device, commandPool);
 
@@ -331,7 +358,7 @@ void Buffers::TransitionImageLayout(const VkDevice &device, const VkCommandPool 
 }
 
 void Buffers::CopyBufferToImage(const VkDevice &device, const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
-                                VkBuffer buffer, Texture &texture)
+                                VkBuffer buffer, Texture &texture) const
 {
     VkCommandBuffer commandBuffer = BeginSingleTimeCommands(device, commandPool);
 
@@ -351,7 +378,7 @@ void Buffers::CopyBufferToImage(const VkDevice &device, const VkCommandPool &com
     EndSingleTimeCommands(device, commandPool, graphicsQueue, commandBuffer);
 }
 
-VkCommandBuffer Buffers::BeginSingleTimeCommands(const VkDevice &device, const VkCommandPool &commandPool)
+VkCommandBuffer Buffers::BeginSingleTimeCommands(const VkDevice &device, const VkCommandPool &commandPool) const
 {
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -372,7 +399,7 @@ VkCommandBuffer Buffers::BeginSingleTimeCommands(const VkDevice &device, const V
 }
 
 void Buffers::EndSingleTimeCommands(const VkDevice &device, const VkCommandPool &commandPool,
-                                    const VkQueue &graphicsQueue, VkCommandBuffer commandBuffer)
+                                    const VkQueue &graphicsQueue, VkCommandBuffer commandBuffer) const
 {
     vkEndCommandBuffer(commandBuffer);
 
@@ -385,6 +412,39 @@ void Buffers::EndSingleTimeCommands(const VkDevice &device, const VkCommandPool 
     vkQueueWaitIdle(graphicsQueue);
 
     vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+}
+
+VkFormat Buffers::FindSupportedFormat(const VkPhysicalDevice &physicalDevice, const std::vector<VkFormat> &candidates,
+                                      const VkImageTiling tiling, const VkFormatFeatureFlags features) const
+{
+    for (VkFormat format : candidates)
+    {
+        VkFormatProperties props{};
+        vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
+
+        if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
+        {
+            return format;
+        }
+        else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features)
+        {
+            return format;
+        }
+    }
+
+    throw VkWrapperError("failed to find supported format!");
+}
+
+VkFormat Buffers::FindDepthFormat(const VkPhysicalDevice &physicalDevice) const
+{
+    return FindSupportedFormat(physicalDevice,
+                               {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
+                               VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+}
+
+bool Buffers::HasStencilComponent(const VkFormat format) const
+{
+    return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
 
 } // namespace ES::Plugin::Wrapper

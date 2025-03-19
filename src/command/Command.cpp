@@ -2,9 +2,9 @@
 
 namespace ES::Plugin::Wrapper {
 
-void Command::Create(const VkDevice &device, const CreateInfo &info)
+void Command::Create(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &surface)
 {
-    _queueFamilies.FindQueueFamilies(info.physicalDevice, info.surface);
+    _queueFamilies.FindQueueFamilies(physicalDevice, surface);
 
     VkCommandPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -55,9 +55,11 @@ void Command::RecordBuffer(const RecordInfo &info)
     renderPassInfo.renderArea.offset = {0, 0};
     renderPassInfo.renderArea.extent = info.swapChainExtent;
 
-    VkClearValue clearColor = {_clearColor.r, _clearColor.g, _clearColor.b, _clearColor.a};
-    renderPassInfo.clearValueCount = 1;
-    renderPassInfo.pClearValues = &clearColor;
+    std::array<VkClearValue, 2> clearValues{};
+    clearValues[0].color = {_clearColor.r, _clearColor.g, _clearColor.b, _clearColor.a};
+    clearValues[1].depthStencil = {1.0f, 0};
+    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+    renderPassInfo.pClearValues = clearValues.data();
 
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -85,7 +87,7 @@ void Command::RecordBuffer(const RecordInfo &info)
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, info.pipelineLayout, 0, 1,
                             &info.descriptorSet, 0, nullptr);
 
-    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(INDICES.size()), 1, 0, 0, 0);
+    vkCmdDrawIndexed(commandBuffer, info.indexCount, 1, 0, 0, 0);
 
     vkCmdEndRenderPass(commandBuffer);
 

@@ -140,12 +140,16 @@ void Instance::CreateGraphicsPipeline(
     const entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> &models)
 {
     const auto &device = _logicalDevice.Get();
+    const auto &physicalDevice = _physicalDevice.Get();
     const auto &extent = _swapChain.GetExtent();
 
-    _renderPass.Create(device, _swapChain.GetSurfaceFormat().format);
+    _renderPass.Create(device, physicalDevice, _swapChain.GetSurfaceFormat().format, _buffers);
 
     _descriptorLayout.Create(device);
-    _graphicsPipeline.Create(device, _renderPass.Get(), shaders, _descriptorLayout.Get());
+
+    _command.Create(device, physicalDevice, _surface.Get());
+
+    _buffers.CreateDepthResources(device, physicalDevice, extent);
 
     const auto &renderPass = _renderPass.Get();
 
@@ -153,20 +157,9 @@ void Instance::CreateGraphicsPipeline(
     framebufferInfo.swapChainExtent = extent;
     framebufferInfo.renderPass = renderPass;
     framebufferInfo.swapChainImageViews = _imageView.GetImageViews();
+    framebufferInfo.depthImageView = _buffers.GetDepthBuffer().GetView();
 
     _framebuffer.Create(device, framebufferInfo);
-
-    const auto &physicalDevice = _physicalDevice.Get();
-
-    Command::CreateInfo commandInfo{};
-    commandInfo.physicalDevice = physicalDevice;
-    commandInfo.surface = _surface.Get();
-    commandInfo.swapChainExtent = extent;
-    commandInfo.renderPass = renderPass;
-    commandInfo.swapChainFramebuffers = _framebuffer.GetSwapChainFramebuffers();
-    commandInfo.graphicsPipeline = _graphicsPipeline.Get();
-
-    _command.Create(device, commandInfo);
 
     Buffers::CreateInfo buffersInfo{};
     buffersInfo.device = device;
@@ -175,9 +168,9 @@ void Instance::CreateGraphicsPipeline(
     buffersInfo.graphicsQueue = _logicalDevice.GetGraphicsQueue();
     buffersInfo.swapChainImages = _swapChain.GetSwapChainImages();
 
-    _buffers.Create(buffersInfo, textures);
+    _buffers.Create(buffersInfo, textures, models);
 
-    _descriptorLayout.CreateDescriptorPool(device);
+    _descriptorLayout.CreateDescriptorPool(device, _allocator);
     _descriptorLayout.CreateDescriptorSet(device, _buffers.GetUniformBuffers(),
                                           const_cast<Texture &>(*textures.begin()->second));
 
@@ -223,11 +216,13 @@ void Instance::RecreateSwapChain(const uint32_t width, const uint32_t height)
     framebufferInfo.renderPass = _renderPass.Get();
     framebufferInfo.swapChainImageViews = _imageView.GetImageViews();
 
+    _buffers.CreateDepthResources(device, _physicalDevice.Get(), _swapChain.GetExtent());
     _framebuffer.Create(device, framebufferInfo);
 }
 
 void Instance::CleanupSwapChain(const VkDevice &device)
 {
+    _buffers.DestroyDepthResources(device);
     _framebuffer.Destroy(device);
     _imageView.Destroy(device);
     _swapChain.Destroy(device);
@@ -263,6 +258,8 @@ Result Instance::DrawNextImage()
     recordInfo.descriptorSet = _descriptorLayout.GetDescriptorSets()[_currentFrame];
     recordInfo.vertexBuffer = _buffers.GetVertexBuffer();
     recordInfo.indexBuffer = _buffers.GetIndexBuffer();
+    recordInfo.vertexCount = _buffers.GetVertexCount();
+    recordInfo.indexCount = _buffers.GetIndexCount();
 
     _command.RecordBuffer(recordInfo);
 

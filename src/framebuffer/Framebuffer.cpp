@@ -8,7 +8,7 @@ void Framebuffer::Create(const VkDevice &device, const CreateInfo &info)
 
     for (size_t i = 0; i < info.swapChainImageViews.size(); ++i)
     {
-        std::array<VkImageView, 1> attachments = {info.swapChainImageViews[i]};
+        std::array<VkImageView, 2> attachments = {info.swapChainImageViews[i], info.depthImageView};
 
         VkFramebufferCreateInfo framebufferInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;

@@ -12,7 +12,7 @@ void ImageView::Create(const VkDevice &device, const std::vector<VkImage> &swapC
         for (uint32_t layer = 0; layer < layerCount; ++layer)
         {
             _swapChainImageViews[i * layerCount + layer] =
-                CreateImageView(device, swapChainImages[i], surfaceFormat.format, layer);
+                CreateImageView(device, swapChainImages[i], surfaceFormat.format, VK_IMAGE_ASPECT_COLOR_BIT, layer);
         }
     }
 }
@@ -23,7 +23,8 @@ void ImageView::Destroy(const VkDevice &device) const
         vkDestroyImageView(device, imageView, nullptr);
 }
 
-VkImageView ImageView::CreateImageView(const VkDevice &device, VkImage image, VkFormat format, uint32_t layer)
+VkImageView ImageView::CreateImageView(const VkDevice &device, VkImage image, VkFormat format,
+                                       VkImageAspectFlags aspectFlags, uint32_t layer)
 {
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -34,7 +35,7 @@ VkImageView ImageView::CreateImageView(const VkDevice &device, VkImage image, Vk
     viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
     viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
     viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-    viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    viewInfo.subresourceRange.aspectMask = aspectFlags;
     viewInfo.subresourceRange.baseMipLevel = 0;
     viewInfo.subresourceRange.levelCount = 1;
     viewInfo.subresourceRange.baseArrayLayer = layer;

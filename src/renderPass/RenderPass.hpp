@@ -22,7 +22,7 @@
 #ifndef RENDERPASS_HPP_
 #define RENDERPASS_HPP_
 
-#include "DebugMessenger.hpp"
+#include "Buffer.hpp"
 
 namespace ES::Plugin::Wrapper {
 
@@ -44,9 +44,12 @@ class RenderPass {
      * This function creates a render pass from the device and the swap chain image format.
      *
      * @param device  The Vulkan device.
+     * @param physicalDevice  The Vulkan physical device.
      * @param swapChainImageFormat  The swap chain image format.
+     * @param buffers  The buffers containing the depth format.
      */
-    void Create(const VkDevice &device, const VkFormat swapChainImageFormat);
+    void Create(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const VkFormat swapChainImageFormat,
+                const Buffers &buffers);
 
     /**
      * @brief Destroys the render pass.

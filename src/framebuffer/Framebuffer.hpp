@@ -42,6 +42,7 @@ class Framebuffer {
         VkExtent2D swapChainExtent;
         VkRenderPass renderPass;
         std::vector<VkImageView> swapChainImageViews;
+        VkImageView depthImageView;
     };
 
   public:

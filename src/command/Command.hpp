@@ -95,6 +95,8 @@ class Command {
         VkDescriptorSet descriptorSet;
         VkBuffer vertexBuffer;
         VkBuffer indexBuffer;
+        uint32_t vertexCount;
+        uint32_t indexCount;
     };
 
   public:
@@ -107,7 +109,7 @@ class Command {
      * @param device  The Vulkan device.
      * @param queueFamilies  The queue families.
      */
-    void Create(const VkDevice &device, const CreateInfo &info);
+    void Create(const VkDevice &device, const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &surface);
 
     /**
      * @brief Creates command buffers separately.

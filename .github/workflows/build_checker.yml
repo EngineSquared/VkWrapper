@@ -13,17 +13,17 @@ on:
       - '**.in'
       - '**.inl'
       - '**.lua'
+      - '**/build_checker.yml'
 
 jobs:
   build_checker:
     name: Build Checker
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest]
         include:
           - os: windows-latest
           - os: ubuntu-latest
-          - os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Git repository

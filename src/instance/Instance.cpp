@@ -135,6 +135,23 @@ void Instance::CreateSwapChainImages(const uint32_t width, const uint32_t height
     _imageView.Create(device, _swapChain.GetSwapChainImages(), _swapChain.GetSurfaceFormat());
 }
 
+void Instance::CreateGuiInstance(GLFWwindow *window)
+{
+    GUI::CreateInfo info = {};
+    info.window = window;
+    info.instance = _instance;
+    info.physicalDevice = _physicalDevice.Get();
+    info.device = _logicalDevice.Get();
+    info.queueFamily = _physicalDevice.GetQueueFamilyIndex();
+    info.queue = _logicalDevice.GetGraphicsQueue();
+    info.minImageCount = MAX_FRAMES_IN_FLIGHT;
+    info.descriptorPool = _descriptorLayout.GetDescriptorPool();
+    info.renderPass = _renderPass.Get();
+    info.allocator = _allocator;
+    GUI::CreateInstance(info);
+    _command.SetGui(true);
+}
+
 void Instance::CreateGraphicsPipeline(
     const ShaderModule::ShaderPaths &shaders, const entt::resource_cache<Texture, TextureLoader> &textures,
     const entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> &models, bool isDepth)

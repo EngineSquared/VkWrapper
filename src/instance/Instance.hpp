@@ -145,6 +145,17 @@ class Instance {
     void CreateSwapChainImages(const uint32_t width, const uint32_t height);
 
     /**
+     * @brief Creates a GUI instance for the Vulkan API.
+     *
+     * This function creates a GUI instance for the Vulkan API. The GUI instance
+     * is used to render user interface elements to the screen. It provides
+     * interactive controls and visual feedback for the application.
+     *
+     * @param window  The GLFW window for which the GUI instance will be created.
+     */
+    void CreateGuiInstance(GLFWwindow *window);
+
+    /**
      * @brief Create a Graphics Pipeline object.
      *
      * This function creates a graphics pipeline for the Vulkan API. The graphics

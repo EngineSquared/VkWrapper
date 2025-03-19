@@ -22,8 +22,7 @@
 #ifndef COMMAND_HPP_
 #define COMMAND_HPP_
 
-#include "Buffer.hpp"
-#include "QueueFamilies.hpp"
+#include "GUI.hpp"
 
 namespace ES::Plugin::Wrapper {
 
@@ -150,11 +149,21 @@ class Command {
      */
     inline void SetClearColor(const glm::vec4 &color) { _clearColor = color; }
 
+    /**
+     * @brief Sets the GUI.
+     *
+     * This function sets the GUI.
+     *
+     * @param isGui  The GUI.
+     */
+    inline void SetGui(bool isGui) { _isGuiEnabled = isGui; }
+
   private:
     VkCommandPool _commandPool;
     QueueFamilies _queueFamilies;
     std::vector<VkCommandBuffer> _commandBuffers;
     glm::vec4 _clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
+    bool _isGuiEnabled = false;
 };
 
 } // namespace ES::Plugin::Wrapper

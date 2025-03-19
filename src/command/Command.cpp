@@ -89,6 +89,9 @@ void Command::RecordBuffer(const RecordInfo &info)
 
     vkCmdDrawIndexed(commandBuffer, info.indexCount, 1, 0, 0, 0);
 
+    if (_isGuiEnabled)
+        GUI::GetInstance().Render(_clearColor, commandBuffer);
+
     vkCmdEndRenderPass(commandBuffer);
 
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)

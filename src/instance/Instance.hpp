@@ -160,11 +160,13 @@ class Instance {
      * @param shaders  The paths to the shader files.
      * @param textures  The textures used in the graphics pipeline.
      * @param models  The models used in the graphics pipeline.
+     * @param isDepth  Whether to enable depth testing.
      */
     void
     CreateGraphicsPipeline(const ShaderModule::ShaderPaths &shaders,
                            const entt::resource_cache<Texture, TextureLoader> &textures,
-                           const entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> &models);
+                           const entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> &models,
+                           bool isDepth);
 
     /**
      * @brief Create synchronization objects for the Vulkan API.
@@ -260,6 +262,7 @@ class Instance {
     void CleanupSwapChain(const VkDevice &device);
 
   private:
+    VkAllocationCallbacks *_allocator = nullptr;
     VkInstance _instance;
     DebugMessenger _debugMessenger;
     PhysicalDevice _physicalDevice;

@@ -55,6 +55,13 @@ void AddTextureAndModel(ES::Engine::Core &core);
 void AddShaders(ES::Engine::Core &core);
 
 /**
+ * @brief Enable the depth test.
+ *
+ * @param core  The Engine² Core.
+ */
+void EnableDepthTest(ES::Engine::Core &core);
+
+/**
  * @brief Create the graphics pipeline.
  *
  * @param core  The Engine² Core.

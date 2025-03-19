@@ -48,27 +48,6 @@ namespace ES::Plugin::Wrapper {
 class Command {
   public:
     /**
-     * @brief CreateInfo struct.
-     *
-     * This struct holds the information required to create a command pool.
-     *
-     * @var VkPhysicalDevice CreateInfo::physicalDevice  The physical device.
-     * @var VkSurfaceKHR CreateInfo::surface  The surface.
-     * @var VkExtent2D CreateInfo::swapChainExtent  The swap chain extent.
-     * @var VkRenderPass CreateInfo::renderPass  The render pass.
-     * @var std::vector<VkFramebuffer> CreateInfo::swapChainFramebuffers  The swap chain framebuffers.
-     * @var VkPipeline CreateInfo::graphicsPipeline  The graphics pipeline.
-     */
-    struct CreateInfo {
-        VkPhysicalDevice physicalDevice;
-        VkSurfaceKHR surface;
-        VkExtent2D swapChainExtent;
-        VkRenderPass renderPass;
-        std::vector<VkFramebuffer> swapChainFramebuffers;
-        VkPipeline graphicsPipeline;
-    };
-
-    /**
      * @brief RecordInfo struct.
      *
      * This struct holds the information required to record a command buffer.

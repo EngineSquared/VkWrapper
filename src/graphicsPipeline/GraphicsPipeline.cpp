@@ -3,7 +3,8 @@
 namespace ES::Plugin::Wrapper {
 
 void GraphicsPipeline::Create(const VkDevice &device, const VkRenderPass &renderPass,
-                              const ShaderModule::ShaderPaths &shaders, const VkDescriptorSetLayout &descriptorLayout)
+                              const ShaderModule::ShaderPaths &shaders, const VkDescriptorSetLayout &descriptorLayout,
+                              bool isDepth)
 {
     auto vertShaderCode = ShaderModule::LoadSPVfile(shaders.vertex.first);
     auto fragShaderCode = ShaderModule::LoadSPVfile(shaders.fragment.first);
@@ -54,7 +55,7 @@ void GraphicsPipeline::Create(const VkDevice &device, const VkRenderPass &render
 
     VkPipelineDepthStencilStateCreateInfo depthStencil{};
     depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-    depthStencil.depthTestEnable = VK_TRUE;
+    depthStencil.depthTestEnable = isDepth ? VK_TRUE : VK_FALSE;
     depthStencil.depthWriteEnable = VK_TRUE;
     depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
     depthStencil.depthBoundsTestEnable = VK_FALSE;

@@ -47,6 +47,8 @@ void AddShaders(ES::Engine::Core &core)
     vkWrapper.AddShader(SHADER_DIR "frag.spv", "main", VkWrapper::ShaderType::FRAGMENT);
 }
 
+void EnableDepthTest(ES::Engine::Core &core) { core.GetResource<VkWrapper>().EnableDepthTest(); }
+
 void CreatePipeline(ES::Engine::Core &core)
 {
     try

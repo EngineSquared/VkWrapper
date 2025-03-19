@@ -166,6 +166,15 @@ class VkWrapper {
     void AddShader(const std::string &shaderPath, const std::string &fname, const ShaderType &shaderType);
 
     /**
+     * @brief Enable the depth test using the Vulkan API.
+     *
+     * This function enables the depth test using the Vulkan API.
+     *
+     * @param enable  Enable or disable the depth test. The default value is true.
+     */
+    inline void EnableDepthTest(bool enable = true) { _isDepth = enable; }
+
+    /**
      * @brief Draw a frame using the Vulkan API.
      *
      * This function draws a frame using the Vulkan API. It waits for the fences
@@ -247,6 +256,7 @@ class VkWrapper {
     Wrapper::ShaderModule::ShaderPaths _shaders;
     entt::resource_cache<Wrapper::Texture, Wrapper::TextureLoader> _textures{};
     entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> _models{};
+    bool _isDepth = false;
 };
 
 } // namespace ES::Plugin

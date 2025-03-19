@@ -137,7 +137,7 @@ void Instance::CreateSwapChainImages(const uint32_t width, const uint32_t height
 
 void Instance::CreateGraphicsPipeline(
     const ShaderModule::ShaderPaths &shaders, const entt::resource_cache<Texture, TextureLoader> &textures,
-    const entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> &models)
+    const entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> &models, bool isDepth)
 {
     const auto &device = _logicalDevice.Get();
     const auto &physicalDevice = _physicalDevice.Get();
@@ -146,6 +146,7 @@ void Instance::CreateGraphicsPipeline(
     _renderPass.Create(device, physicalDevice, _swapChain.GetSurfaceFormat().format, _buffers);
 
     _descriptorLayout.Create(device);
+    _graphicsPipeline.Create(device, _renderPass.Get(), shaders, _descriptorLayout.Get(), isDepth);
 
     _command.Create(device, physicalDevice, _surface.Get());
 

@@ -15,7 +15,7 @@ void VkWrapper::CreateInstance(GLFWwindow *window, const std::string &applicatio
 
 void VkWrapper::CreatePipeline()
 {
-    _instance.CreateGraphicsPipeline(_shaders, _textures, _models);
+    _instance.CreateGraphicsPipeline(_shaders, _textures, _models, _isDepth);
     _instance.CreateSyncObjects();
 }
 

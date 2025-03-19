@@ -48,9 +48,10 @@ class GraphicsPipeline {
      * @param renderPass  The render pass.
      * @param shaders  The shader paths.
      * @param descriptorLayout  The descriptor layout.
+     * @param isDepth  Whether to enable depth testing.
      */
     void Create(const VkDevice &device, const VkRenderPass &renderPass, const ShaderModule::ShaderPaths &shaders,
-                const VkDescriptorSetLayout &descriptorLayout);
+                const VkDescriptorSetLayout &descriptorLayout, bool isDepth);
 
     /**
      * @brief Destroys the graphics pipeline.

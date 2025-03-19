@@ -1,9 +1,31 @@
-/*
-** EPITECH PROJECT, 2025
-** VkWrapper-Test [WSL : Ubuntu]
-** File description:
-** GUI
-*/
+/**************************************************************************
+ * VkWrapper v0.0.4
+ *
+ * VkWrapper is a software package, part of the Engine².
+ *
+ * This file is part of the VkWrapper project that is under GPL-3.0 License.
+ * Copyright © 2024 by @EngineSquared, All rights reserved.
+ *
+ * VkWrapper is a free software: you can redistribute it and/or modify
+ * it under the terms of the GPL-3.0 License as published by the
+ * Free Software Foundation. See the GPL-3.0 License for more details.
+ *
+ * @file GUI.hpp
+ * @brief GUI class declaration.
+ *
+ * This class is used to create a GUI instance for the Vulkan API.
+ * It provides a graphical user interface for the application to interact with
+ * the user and display information. It is used for debugging and development
+ * purposes to visualize data and control the application. The GUI class is
+ * based on the ImGui library and provides a simple and intuitive interface
+ * for creating user interfaces.
+ *
+ * @ref https://frguthmann.github.io/posts/vulkan_imgui/
+ *
+ * @author @MasterLaplace
+ * @version 0.0.4
+ * @date 2024-10-24
+ **************************************************************************/
 
 #ifndef GUI_HPP_
 #define GUI_HPP_
@@ -22,7 +44,7 @@ namespace ES::Plugin::Wrapper {
  *
  * @example "Usage of the GUI class:"
  * @code
- * ES::Plugin::Wrapper::GUI::CreateInfo info = {};
+ * ES::Plugin::Wrapper::GUI::CreateInfo info{};
  * info.window = window;
  * info.instance = instance;
  * info.physicalDevice = physicalDevice;

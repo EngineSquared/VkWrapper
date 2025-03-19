@@ -1,0 +1,49 @@
+name: Build Checker CI
+
+on:
+  push:
+    branches-ignore:
+     - 'ga-ignore-**'
+     - 'gh-pages'
+    paths:
+      - '**.cpp'
+      - '**.hpp'
+      - '**.c'
+      - '**.h'
+      - '**.in'
+      - '**.inl'
+
+jobs:
+  build_checker:
+    name: Build Checker
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        include:
+          - os: windows-latest
+          - os: ubuntu-latest
+          - os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v4
+
+      - name: git clone EngineSquared
+        run: |
+          git clone https://github.com/EngineSquared/EngineSquared.git
+
+      - name: Install xmake
+        uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
+          actions-cache-folder: '.xmake-cache'
+          actions-cache-key: '${{ runner.os }}-xmake-install'
+          package-cache: true
+          package-cache-key: '${{ runner.os }}-xmake-entt-vulkan-glm-glfw-spdlog-tinyobjloader-stb-imgui'
+          project-path: '.'
+
+      - name: Configure and Build
+        run: |
+          xmake config --mode=release
+          xmake build -y
+        timeout-minutes: 5

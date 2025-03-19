@@ -1,15 +1,15 @@
-add_repositories("es_repo https://github.com/EngineSquared/es-repo.git")
-
 add_rules("mode.debug", "mode.release", "plugin.vsxmake.autoupdate")
 
-add_requires("vulkan-headers", "vulkansdk", "vulkan-hpp", "glfw", "glm", "spdlog", "stb", "entt", "engine-squared-fork")
+add_requires("vulkan-headers", "vulkansdk", "vulkan-hpp", "glfw", "glm", "spdlog", "stb", "entt")
 add_requires("imgui", {configs = {vulkan = true, glfw = true}})
+
+includes("EngineSquared/xmake.lua")
 
 target("PluginVkWrapper")
     set_kind("static")
     set_default(true)
     set_languages("cxx20")
-    add_packages("vulkan-headers", "vulkansdk", "vulkan-hpp", "glfw", "glm", "spdlog", "stb", "imgui", "entt", "engine-squared-fork")
+    add_packages("vulkan-headers", "vulkansdk", "vulkan-hpp", "glfw", "glm", "spdlog", "stb", "imgui", "entt")
     set_policy("build.warning", true)
     set_version("0.0.4")
 
@@ -21,6 +21,8 @@ target("PluginVkWrapper")
         add_defines("NDEBUG")
         set_optimize("fastest")
     end
+
+    add_deps("EngineSquared")
 
     add_files("src/**.cpp")
     add_headerfiles("src/**.hpp", { public = true })

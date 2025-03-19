@@ -8,11 +8,11 @@
 #ifndef GUI_HPP_
 #define GUI_HPP_
 
+#include "Buffer.hpp"
+#include "QueueFamilies.hpp"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_vulkan.h"
-#include "Buffer.hpp"
-#include "QueueFamilies.hpp"
 #include <memory>
 
 namespace ES::Plugin::Wrapper {
@@ -55,13 +55,13 @@ class GUI {
     static inline void CreateInstance(const CreateInfo &info)
     {
         if (_instance == nullptr)
-        _instance = std::make_unique<GUI>(info);
+            _instance = std::make_unique<GUI>(info);
     }
 
     static inline void DestroyInstance()
     {
         if (_instance != nullptr)
-        _instance.reset();
+            _instance.reset();
     }
 
     static inline GUI &GetInstance()
@@ -85,7 +85,6 @@ class GUI {
      * This ensures that the GUI class can be properly destroyed.
      */
     ~GUI();
-
 
     /**
      * @brief Deleted copy constructor.

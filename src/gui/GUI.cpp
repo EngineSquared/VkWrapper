@@ -38,8 +38,8 @@ void GUI::Render(const glm::vec4 &clear_color, const VkCommandBuffer &commandBuf
     if (_show_another_window)
     {
         ImGui::Begin("Another Window",
-                        &_show_another_window); // Pass a pointer to our bool variable (the window will have a closing
-                                                // button that will clear the bool when clicked)
+                     &_show_another_window); // Pass a pointer to our bool variable (the window will have a closing
+                                             // button that will clear the bool when clicked)
         ImGui::Text("Hello from another window!");
         if (ImGui::Button("Close Me"))
             _show_another_window = false;

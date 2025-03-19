@@ -2,9 +2,9 @@
 
 namespace ES::Plugin::Wrapper {
 
-void Surface::Create(GLFWwindow *window, const VkInstance &instance)
+void Surface::Create(GLFWwindow *window, const VkInstance &instance, VkAllocationCallbacks *allocator)
 {
-    if (glfwCreateWindowSurface(instance, window, nullptr, &_surface) != VK_SUCCESS)
+    if (glfwCreateWindowSurface(instance, window, allocator, &_surface) != VK_SUCCESS)
         throw VkWrapperError("Failed to create window surface!");
 }
 

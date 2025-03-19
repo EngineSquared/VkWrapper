@@ -53,8 +53,9 @@ class Surface {
      *
      * @param window  The GLFW window.
      * @param instance  The Vulkan instance.
+     * @param allocator  The Vulkan allocation callbacks.
      */
-    void Create(GLFWwindow *window, const VkInstance &instance);
+    void Create(GLFWwindow *window, const VkInstance &instance, VkAllocationCallbacks *allocator);
 
     /**
      * @brief Destroys the surface.

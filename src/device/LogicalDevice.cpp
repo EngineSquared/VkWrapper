@@ -10,7 +10,7 @@ void LogicalDevice::Create(const VkPhysicalDevice &physicalDevice, const VkSurfa
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
-    float queuePriority = 1.0f;
+    const float queuePriority = 1.0f;
 
     for (uint32_t queueFamily : uniqueQueueFamilies)
     {

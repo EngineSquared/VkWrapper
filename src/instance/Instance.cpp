@@ -38,7 +38,7 @@ void Instance::Create(const std::string &applicationName)
         createInfo.pNext = &debugCreateInfo;
     }
 
-    if (vkCreateInstance(&createInfo, nullptr, &_instance) != VK_SUCCESS)
+    if (vkCreateInstance(&createInfo, _allocator, &_instance) != VK_SUCCESS)
         throw VkWrapperError("failed to create instance!");
 }
 
@@ -116,7 +116,7 @@ void Instance::SetupDebugMessenger()
     _debugMessenger.SetupDebugMessenger(_instance);
 }
 
-void Instance::CreateSurface(GLFWwindow *window) { _surface.Create(window, _instance); }
+void Instance::CreateSurface(GLFWwindow *window) { _surface.Create(window, _instance, _allocator); }
 
 void Instance::SetupDevices()
 {

@@ -29,13 +29,21 @@ void Descriptor::Create(const VkDevice &device)
         throw VkWrapperError("failed to create descriptor set layout!");
 }
 
-void Descriptor::CreateDescriptorPool(const VkDevice &device)
+void Descriptor::CreateDescriptorPool(const VkDevice &device, VkAllocationCallbacks *allocator)
 {
-    std::array<VkDescriptorPoolSize, 2> poolSizes{};
-    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSizes[0].descriptorCount = MAX_FRAMES_IN_FLIGHT;
-    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    poolSizes[1].descriptorCount = MAX_FRAMES_IN_FLIGHT;
+    std::array<VkDescriptorPoolSize, 11> poolSizes = {{
+        {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         MAX_FRAMES_IN_FLIGHT},
+        {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MAX_FRAMES_IN_FLIGHT},
+        {VK_DESCRIPTOR_TYPE_SAMPLER,                MAX_FRAMES_IN_FLIGHT},
+        {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,          MAX_FRAMES_IN_FLIGHT},
+        {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,          MAX_FRAMES_IN_FLIGHT},
+        {VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,   MAX_FRAMES_IN_FLIGHT},
+        {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER,   MAX_FRAMES_IN_FLIGHT},
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         MAX_FRAMES_IN_FLIGHT},
+        {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, MAX_FRAMES_IN_FLIGHT},
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, MAX_FRAMES_IN_FLIGHT},
+        {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,       MAX_FRAMES_IN_FLIGHT}
+    }};
 
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -43,7 +51,7 @@ void Descriptor::CreateDescriptorPool(const VkDevice &device)
     poolInfo.pPoolSizes = poolSizes.data();
     poolInfo.maxSets = MAX_FRAMES_IN_FLIGHT;
 
-    if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &_descriptorPool) != VK_SUCCESS)
+    if (vkCreateDescriptorPool(device, &poolInfo, allocator, &_descriptorPool) != VK_SUCCESS)
         throw VkWrapperError("failed to create descriptor pool!");
 }
 

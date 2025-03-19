@@ -66,6 +66,15 @@ class PhysicalDevice {
      */
     [[nodiscard]] const VkPhysicalDevice &Get() const { return _physicalDevice; }
 
+    /**
+     * @brief Gets the queue family index.
+     *
+     * This function returns the index of the queue family.
+     *
+     * @return The queue family index.
+     */
+    [[nodiscard]] uint32_t GetQueueFamilyIndex() const;
+
   private:
     /**
      * @brief Checks if the physical device is suitable for the application.

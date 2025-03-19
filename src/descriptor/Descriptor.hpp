@@ -59,7 +59,7 @@ class Descriptor {
      *
      * @param device  The Vulkan device.
      */
-    void CreateDescriptorPool(const VkDevice &device);
+    void CreateDescriptorPool(const VkDevice &device, VkAllocationCallbacks *allocator);
 
     /**
      * @brief Creates the descriptor set.

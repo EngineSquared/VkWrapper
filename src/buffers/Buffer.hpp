@@ -25,7 +25,7 @@
 #include "ImageView.hpp"
 #include "Texture.hpp"
 #include "UniformObject.hpp"
-#include "Vertex.hpp"
+#include "VkMesh.hpp"
 
 #include <chrono>
 #include <entt/core/hashed_string.hpp>

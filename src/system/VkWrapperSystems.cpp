@@ -61,7 +61,22 @@ void CreatePipeline(ES::Engine::Core &core)
     }
 }
 
-void ChangeClearColor(ES::Engine::Core &core)
+void CreateGuiInstance(ES::Engine::Core &core)
+{
+    auto &vkWrapper = core.GetResource<VkWrapper>();
+    auto &window = core.GetResource<Window::Resource::Window>();
+
+    try
+    {
+        vkWrapper.CreateGuiInstance(window.GetGLFWWindow());
+    }
+    catch (const VkWrapperError &e)
+    {
+        ES::Utils::Log::Error(e.what());
+    }
+}
+
+void ChangeClearColor(ES::Engine::Core &core [[maybe_unused]])
 {
     core.GetResource<VkWrapper>().ChangeClearColor({0.0f, 0.0f, 0.0f, 1.0f});
 }

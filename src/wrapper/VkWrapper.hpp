@@ -105,6 +105,14 @@ class VkWrapper {
                         const uint32_t height);
 
     /**
+     * @brief Create the GUI instance using the Vulkan implementation of ImGui.
+     * ImGui is a bloat-free graphical user interface library for C++.
+     *
+     * @param window  The GLFW window to create the GUI instance for.
+     */
+    void CreateGuiInstance(GLFWwindow *window);
+
+    /**
      * @brief Create the graphics pipeline using the Vulkan API.
      *
      * This function creates the graphics pipeline using the Vulkan API. It creates
@@ -257,6 +265,7 @@ class VkWrapper {
     entt::resource_cache<Wrapper::Texture, Wrapper::TextureLoader> _textures{};
     entt::resource_cache<Object::Component::Mesh, Object::Component::MeshLoader> _models{};
     bool _isDepth = false;
+    bool _isGui = false;
 };
 
 } // namespace ES::Plugin

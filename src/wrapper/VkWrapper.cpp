@@ -13,6 +13,12 @@ void VkWrapper::CreateInstance(GLFWwindow *window, const std::string &applicatio
     _instance.CreateSwapChainImages(width, height);
 }
 
+void VkWrapper::CreateGuiInstance(GLFWwindow *window)
+{
+    _instance.CreateGuiInstance(window);
+    _isGui = true;
+}
+
 void VkWrapper::CreatePipeline()
 {
     _instance.CreateGraphicsPipeline(_shaders, _textures, _models, _isDepth);
@@ -25,6 +31,9 @@ void VkWrapper::Destroy()
 
     _textures.clear();
     _models.clear();
+
+    if (_isGui)
+        Wrapper::GUI::DestroyInstance();
 }
 
 void VkWrapper::AddTexture(const std::string &texturePath, uint32_t &textureId)

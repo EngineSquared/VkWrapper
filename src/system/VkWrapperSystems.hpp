@@ -69,6 +69,13 @@ void EnableDepthTest(ES::Engine::Core &core);
 void CreatePipeline(ES::Engine::Core &core);
 
 /**
+ * @brief Create the GUI instance.
+ *
+ * @param core  The Engine² Core.
+ */
+void CreateGuiInstance(ES::Engine::Core &core);
+
+/**
  * @brief Change the clear color of the VkWrapper.
  *
  * @param core  The Engine² Core.

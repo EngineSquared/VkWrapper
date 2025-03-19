@@ -80,7 +80,7 @@ void Command::RecordBuffer(const RecordInfo &info)
     VkDeviceSize offsets{};
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, &info.vertexBuffer, &offsets);
 
-    vkCmdBindIndexBuffer(commandBuffer, info.indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdBindIndexBuffer(commandBuffer, info.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, info.pipelineLayout, 0, 1,
                             &info.descriptorSet, 0, nullptr);

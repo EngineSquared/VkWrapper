@@ -20,8 +20,21 @@ void Texture::Create(const std::string &texturePath)
         throw VkWrapperError("failed to load texture image (" + texturePath + "): " + stbi_failure_reason());
 }
 
+void Texture::Create(const uint32_t width, const uint32_t height)
+{
+    _width = width;
+    _height = height;
+}
+
 void Texture::Destroy(const VkDevice &_device)
 {
+    if (_image != VK_NULL_HANDLE && _imageMemory != VK_NULL_HANDLE && _imageView != VK_NULL_HANDLE)
+    {
+        vkDestroyImageView(_device, _imageView, nullptr);
+        vkDestroyImage(_device, _image, nullptr);
+        vkFreeMemory(_device, _imageMemory, nullptr);
+    }
+
     if (!_pixels)
         return;
 
@@ -30,13 +43,6 @@ void Texture::Destroy(const VkDevice &_device)
     _width = 0;
     _height = 0;
     _channels = 0;
-
-    if (_image == VK_NULL_HANDLE || _imageMemory == VK_NULL_HANDLE || _imageView == VK_NULL_HANDLE)
-        return;
-
-    vkDestroyImageView(_device, _imageView, nullptr);
-    vkDestroyImage(_device, _image, nullptr);
-    vkFreeMemory(_device, _imageMemory, nullptr);
 }
 
 } // namespace ES::Plugin::Wrapper

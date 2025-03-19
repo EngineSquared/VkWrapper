@@ -46,6 +46,14 @@ class Texture {
     void Create(const std::string &texturePath);
 
     /**
+     * @brief Create a new Texture object only used for depth images.
+     *
+     * @param width  The width of the texture.
+     * @param height  The height of the texture.
+     */
+    void Create(const uint32_t width, const uint32_t height);
+
+    /**
      * @brief Destroy the Texture object including the Vulkan image and memory and the pixels.
      *
      * @param _device  The Vulkan device.
@@ -99,14 +107,14 @@ class Texture {
      *
      * @return VkImage&  The Vulkan image.
      */
-    VkImage &GetImage() { return _image; }
+    [[nodiscard]] VkImage &GetImage() { return _image; }
 
     /**
      * @brief Get the Image Memory object
      *
      * @return VkDeviceMemory&  The Vulkan image memory.
      */
-    VkDeviceMemory &GetMemory() { return _imageMemory; }
+    [[nodiscard]] VkDeviceMemory &GetMemory() { return _imageMemory; }
 
     /**
      * @brief Get the Image View object

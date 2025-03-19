@@ -32,7 +32,8 @@ void Buffers::Create(const CreateInfo &info, const entt::resource_cache<Texture,
 }
 
 void Buffers::CreateVertexBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice,
-                                 const VkCommandPool &commandPool, const VkQueue &graphicsQueue, const Object::Component::Mesh &mesh)
+                                 const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
+                                 const Object::Component::Mesh &mesh)
 {
     VkDeviceSize bufferSize = sizeof(VERTICES[0]) * VERTICES.size();
 
@@ -59,7 +60,8 @@ void Buffers::CreateVertexBuffer(const VkDevice &device, const VkPhysicalDevice 
 }
 
 void Buffers::CreateIndexBuffer(const VkDevice &device, const VkPhysicalDevice &physicalDevice,
-                                const VkCommandPool &commandPool, const VkQueue &graphicsQueue, const Object::Component::Mesh &mesh)
+                                const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
+                                const Object::Component::Mesh &mesh)
 {
     VkDeviceSize bufferSize = sizeof(INDICES[0]) * INDICES.size();
     _indexCount = static_cast<uint32_t>(INDICES.size());

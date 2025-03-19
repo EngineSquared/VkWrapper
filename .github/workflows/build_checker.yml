@@ -12,6 +12,7 @@ on:
       - '**.h'
       - '**.in'
       - '**.inl'
+      - '**.lua'
 
 jobs:
   build_checker:

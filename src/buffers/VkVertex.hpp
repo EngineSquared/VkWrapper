@@ -1,5 +1,5 @@
 /**************************************************************************
- * VkWrapper v0.0.0
+ * VkWrapper v0.0.4
  *
  * VkWrapper is a software package, part of the Engine².
  *
@@ -10,39 +10,39 @@
  * it under the terms of the GPL-3.0 License as published by the
  * Free Software Foundation. See the GPL-3.0 License for more details.
  *
- * @file Vertex.hpp
- * @brief Vertex class declaration.
- *
+ * @file VkVertex.hpp
+ * @brief VkVertex class declaration.
  *
  * @author @MasterLaplace
- * @version 0.0.0
+ * @version 0.0.4
  * @date 2024-11-03
  **************************************************************************/
 
-#ifndef VERTEX_HPP_
-#define VERTEX_HPP_
+#ifndef VKVERTEX_HPP_
+#define VKVERTEX_HPP_
 
 #include "DebugMessenger.hpp"
-#include "Mesh.hpp"
+#include "component/Mesh.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <array>
 
 namespace ES::Plugin::Wrapper {
 
 /**
- * @brief Vertex structure.
+ * @brief VkVertex structure.
  *
  * This structure is used to represent a vertex in the Vulkan API.
  * It contains the position and color of the vertex.
  *
  * @example "Get the binding and attribute descriptions for the vertex."
  * @code
- * auto bindingDescription = Vertex::GetBindingDescription();
- * auto attributeDescriptions = Vertex::GetAttributeDescriptions();
+ * auto bindingDescription = VkVertex::GetBindingDescription();
+ * auto attributeDescriptions = VkVertex::GetAttributeDescriptions();
  * @endcode
  */
 struct VkVertex : public Object::Component::Vertex {
@@ -71,14 +71,19 @@ struct VkVertex : public Object::Component::Vertex {
 };
 
 const std::vector<VkVertex> VERTICES = {
-    {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-    {{0.5f, -0.5f, 0.0f},  {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-    {{0.5f, 0.5f, 0.0f},   {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-    {{-0.5f, 0.5f, 0.0f},  {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
+    {{-0.5f, -0.5f, 0.0f},  {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+    {{0.5f, -0.5f, 0.0f},   {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+    {{0.5f, 0.5f, 0.0f},    {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+    {{-0.5f, 0.5f, 0.0f},   {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+
+    {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+    {{0.5f, -0.5f, -0.5f},  {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+    {{0.5f, 0.5f, -0.5f},   {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+    {{-0.5f, 0.5f, -0.5f},  {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
 };
 
-const std::vector<uint16_t> INDICES = {0, 1, 2, 2, 3, 0};
+const std::vector<uint32_t> INDICES = {0, 1, 2, 2, 3, 0, 4, 5, 6, 6, 7, 4};
 
 } // namespace ES::Plugin::Wrapper
 
-#endif /* !VERTEX_HPP_ */
+#endif /* !VKVERTEX_HPP_ */

@@ -29,8 +29,8 @@ void AddTextureAndModel(ES::Engine::Core &core)
 
     try
     {
-        vkWrapper.AddTexture(ASSETS_DIR "images/texture.png", textureId);
-        vkWrapper.AddModel(ASSETS_DIR "models/plan.obj", modelId);
+        vkWrapper.AddTexture(ASSETS_DIR "images/viking_room.png", textureId);
+        vkWrapper.AddModel(ASSETS_DIR "models/viking_room.obj", modelId);
         vkWrapper.BindTexture(textureId, modelId);
     }
     catch (const VkWrapperError &e)

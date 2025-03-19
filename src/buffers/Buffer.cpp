@@ -35,7 +35,7 @@ void Buffers::CreateVertexBuffer(const VkDevice &device, const VkPhysicalDevice 
                                  const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
                                  const Object::Component::Mesh &mesh)
 {
-    VkDeviceSize bufferSize = sizeof(VERTICES[0]) * VERTICES.size();
+    VkDeviceSize bufferSize = sizeof(mesh.vertices[0]) * mesh.vertices.size();
 
     VkBuffer stagingBuffer{};
     VkDeviceMemory stagingBufferMemory{};
@@ -46,7 +46,7 @@ void Buffers::CreateVertexBuffer(const VkDevice &device, const VkPhysicalDevice 
 
     void *data = nullptr;
     vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-    memcpy(data, VERTICES.data(), bufferSize);
+    memcpy(data, mesh.vertices.data(), bufferSize);
     vkUnmapMemory(device, stagingBufferMemory);
 
     CreateBuffer(device, physicalDevice, bufferSize,
@@ -63,8 +63,8 @@ void Buffers::CreateIndexBuffer(const VkDevice &device, const VkPhysicalDevice &
                                 const VkCommandPool &commandPool, const VkQueue &graphicsQueue,
                                 const Object::Component::Mesh &mesh)
 {
-    VkDeviceSize bufferSize = sizeof(INDICES[0]) * INDICES.size();
-    _indexCount = static_cast<uint32_t>(INDICES.size());
+    VkDeviceSize bufferSize = sizeof(mesh.indices[0]) * mesh.indices.size();
+    _indexCount = static_cast<uint32_t>(mesh.indices.size());
 
     VkBuffer stagingBuffer{};
     VkDeviceMemory stagingBufferMemory{};
@@ -75,7 +75,7 @@ void Buffers::CreateIndexBuffer(const VkDevice &device, const VkPhysicalDevice &
 
     void *data = nullptr;
     vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-    memcpy(data, INDICES.data(), bufferSize);
+    memcpy(data, mesh.indices.data(), bufferSize);
     vkUnmapMemory(device, stagingBufferMemory);
 
     CreateBuffer(device, physicalDevice, bufferSize,

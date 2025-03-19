@@ -81,12 +81,12 @@ struct VkMesh : public Object::Component::Mesh {
     /**
      * @brief Copy assignment operator.
      */
-    VkMesh& operator=(const VkMesh &other) = default;
+    VkMesh &operator=(const VkMesh &other) = default;
 
     /**
      * @brief Move assignment operator.
      */
-    VkMesh& operator=(VkMesh &&other) noexcept = default;
+    VkMesh &operator=(VkMesh &&other) noexcept = default;
 };
 
 } // namespace ES::Plugin::Wrapper

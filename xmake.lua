@@ -23,6 +23,7 @@ target("PluginVkWrapper")
     end
 
     add_files("src/**.cpp")
+    add_headerfiles("src/**.hpp", { public = true })
     add_includedirs("src", { public = true })
     add_includedirs("src/wrapper", { public = true })
     add_includedirs("src/instance", { public = true })
@@ -42,3 +43,4 @@ target("PluginVkWrapper")
     add_includedirs("src/descriptor", { public = true })
     add_includedirs("src/system", { public = true })
     add_includedirs("src/gui", { public = true })
+    add_includedirs("src/plugin", { public = true })

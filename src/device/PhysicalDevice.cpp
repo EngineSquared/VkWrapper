@@ -83,9 +83,6 @@ uint32_t PhysicalDevice::RateDeviceSuitability(const VkPhysicalDevice &device) c
     return score;
 }
 
-uint32_t PhysicalDevice::GetQueueFamilyIndex() const
-{
-    return _queueFamilies.GetIndices().graphicsFamily.value();
-}
+uint32_t PhysicalDevice::GetQueueFamilyIndex() const { return _queueFamilies.GetIndices().graphicsFamily.value(); }
 
 } // namespace ES::Plugin::Wrapper
